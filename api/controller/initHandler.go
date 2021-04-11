@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
-	"github.com/swaggo/swag/example/basic/docs"
 	"gorm.io/gorm"
 )
 
@@ -26,39 +25,23 @@ type (
 )
 
 var mlog *util.MLogger
+var timeout = 10 * time.Second
 
-func init() {
-	mlog, _ = util.InitLog("controller", "devel")
+func InitControler(env string) {
+	mlog, _ = util.InitLog("controller", env)
 }
 
 // InitHandler ...
 func InitHandler(pandita *conf.ViperConfig, e *echo.Echo, db *gorm.DB) (err error) {
-
-	mlog, _ = util.InitLog("controller", pandita.GetString("loglevel"))
-	// timeout := time.Duration(pandita.GetInt("timeout")) * time.Second
-
-	// Default Group
-	//	url := echoSwagger.URL("http://localhost:10811/swagger/swagger.json")
-	//e.GET("/swagger/*", echoSwagger.EchoWrapHandler(url))
-	docs.SwaggerInfo.Host = pandita.GetString("swagger_host")
 	api := e.Group("/api")
 	ver := api.Group("/v1")
 	ver.Use(mw.TransID())
 
-	// envStr := pandita.GetString("ENV")
-	// jwtkey := pandita.GetString("jwt_access_key")
-	// if jwtkey == "" {
-	// 	mlog.Warnw("InitHandler cannot call Client API because of empty JWTKey")
-	// }
-	// if envStr != "" && envStr != "prod" {
-	// 	e.GET("/swagger/*", echoSwagger.WrapHandler)
-	// }
-	// e.GET("/*", func(c echo.Context) error { return c.Render(http.StatusOK, "envStr", envStr) })
-
-	timeout := 10 * time.Second
-	uRepo := repo.NewGormUserRepository(db)
-	uService := service.NewUserService(uRepo, timeout)
-	newHTTPHandler(ver, pandita, uService)
+	cardRepo := repo.NewGormCardRepository(db)
+	columnRepo := repo.NewGormColumnRepository(db)
+	cardService := service.NewCardService(cardRepo, timeout)
+	columnService := service.NewColumnService(columnRepo, timeout)
+	newHTTPHandler(ver, pandita, cardService, columnService)
 	return nil
 }
 

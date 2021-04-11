@@ -6,6 +6,6 @@ import (
 
 var mlog *util.MLogger
 
-func init() {
-	mlog, _ = util.InitLog("model", "console")
+func InitModel(env string) {
+	mlog, _ = util.InitLog("model", env)
 }

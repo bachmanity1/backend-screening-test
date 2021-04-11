@@ -27,7 +27,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-redis/redis"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -35,14 +34,12 @@ import (
 
 var mlog *util.MLogger
 
-func init() {
-	mlog, _ = util.InitLog("repository", "console")
+func InitRepository(env string) {
+	mlog, _ = util.InitLog("repository", env)
 }
 
 // InitDB ...
 func InitDB(pandita *conf.ViperConfig) *gorm.DB {
-	mlog, _ = util.InitLog("repository", pandita.GetString("loglevel"))
-
 	mlog.Debugw("InitDB ",
 		"host", pandita.GetString("db_host"),
 		"user", pandita.GetString("db_user"),
@@ -107,23 +104,18 @@ func getLogLevel(logLevel string) logger.LogLevel {
 	return logger.Silent
 }
 
-// InitRedis ...
-func InitRedis(pandita *conf.ViperConfig) *redis.Client {
-	host := pandita.GetString("redis")
-	mlog.Infow("InitRedis", "host", host)
-	client := redis.NewClient(&redis.Options{
-		Addr:     host,
-		Password: "",
-		DB:       0,
-	})
-	if _, err := client.Ping().Result(); err != nil {
-		mlog.Errorw("InitRedis NewClient", "host", host, "err", err)
-		return nil
-	}
-	return client
+// ColumnRepository ...
+type ColumnRepository interface {
+	NewColumn(ctx context.Context, column *model.Column) (*model.Column, error)
+	UpdateColumn(ctx context.Context, column *model.Column) (*model.Column, error)
+	GetColumnByID(ctx context.Context, id uint64) (*model.Column, error)
+	DeleteColumn(ctx context.Context, id uint64) error
 }
 
-// UserRepository ...
-type UserRepository interface {
-	GetUserByID(ctx context.Context, uid uint64) (user *model.User, err error)
+// CardRepository ...
+type CardRepository interface {
+	NewCard(ctx context.Context, card *model.Card) (*model.Card, error)
+	UpdateCard(ctx context.Context, card *model.Card) (*model.Card, error)
+	GetCardByID(ctx context.Context, id uint64) (*model.Card, error)
+	DeleteCard(ctx context.Context, id uint64) error
 }

@@ -20,10 +20,22 @@ import (
 
 var mlog *util.MLogger
 
-func init() {
-	mlog, _ = util.InitLog("service", "console")
+func InitService(env string) {
+	mlog, _ = util.InitLog("service", env)
 }
 
-type UserService interface {
-	GetUserByID(ctx context.Context, uid uint64) (user *model.User, err error)
+// ColumnService ...
+type ColumnService interface {
+	NewColumn(ctx context.Context, column *model.Column) (*model.Column, error)
+	UpdateColumn(ctx context.Context, column *model.Column) (*model.Column, error)
+	GetColumnByID(ctx context.Context, id uint64) (*model.Column, error)
+	DeleteColumn(ctx context.Context, id uint64) error
+}
+
+// CardService ...
+type CardService interface {
+	NewCard(ctx context.Context, card *model.Card) (*model.Card, error)
+	UpdateCard(ctx context.Context, card *model.Card) (*model.Card, error)
+	GetCardByID(ctx context.Context, id uint64) (*model.Card, error)
+	DeleteCard(ctx context.Context, id uint64) error
 }

@@ -8,15 +8,19 @@ import (
 )
 
 type HTTPHandler struct {
-	pandita  *conf.ViperConfig
-	uService service.UserService
+	pandita       *conf.ViperConfig
+	cardService   service.CardService
+	columnService service.ColumnService
 }
 
 func newHTTPHandler(eg *echo.Group,
 	pandita *conf.ViperConfig,
-	uService service.UserService) {
-	handler := &HTTPHandler{pandita, uService}
+	cardService service.CardService,
+	columnService service.ColumnService) {
+	handler := &HTTPHandler{pandita, cardService, columnService}
 
-	userGroup := eg.Group("/user")
-	newHTTPUserHandler(userGroup, handler)
+	columnGroup := eg.Group("/column")
+	newHTTPColumnHandler(columnGroup, handler)
+	cardGroup := columnGroup.Group("/:columnid/card")
+	newHTTPCardHandler(cardGroup, handler)
 }
