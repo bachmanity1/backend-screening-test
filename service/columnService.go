@@ -22,12 +22,12 @@ func NewColumnService(repo repo.ColumnRepository, timeout time.Duration) ColumnS
 
 // NewColumn ...
 func (c *columnUsecase) NewColumn(ctx context.Context, column *model.Column) (ccolumn *model.Column, err error) {
-	return c.NewColumn(ctx, column)
+	return c.repo.NewColumn(ctx, column)
 }
 
 // UpdateColumn ...
 func (c *columnUsecase) UpdateColumn(ctx context.Context, column *model.Column) (ccolumn *model.Column, err error) {
-	return c.UpdateColumn(ctx, column)
+	return c.repo.UpdateColumn(ctx, column)
 }
 
 // GetColumnByID ...

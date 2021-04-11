@@ -22,12 +22,12 @@ func NewCardService(repo repo.CardRepository, timeout time.Duration) CardService
 
 // NewCard ...
 func (c *cardUsecase) NewCard(ctx context.Context, card *model.Card) (ccard *model.Card, err error) {
-	return c.NewCard(ctx, card)
+	return c.repo.NewCard(ctx, card)
 }
 
 // UpdateCard ...
 func (c *cardUsecase) UpdateCard(ctx context.Context, card *model.Card) (ccard *model.Card, err error) {
-	return c.UpdateCard(ctx, card)
+	return c.repo.UpdateCard(ctx, card)
 }
 
 // GetCardByID ...
