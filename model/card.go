@@ -7,8 +7,8 @@ import (
 )
 
 type Card struct {
-	ColumnID    uint64         `gorm:"primaryKey;autoIncrement:false" json:"columnId"`
-	ID          uint64         `gorm:"primaryKey;autoIncrement:false" json:"id"`
+	ID          uint64         `gorm:"primaryKey" json:"id"`
+	ColumnID    uint64         `gorm:"index" json:"columnId"`
 	Name        string         `gorm:"not null" json:"name"`
 	Description string         `gorm:"not null" json:"description"`
 	Order       uint           `json:"order"`

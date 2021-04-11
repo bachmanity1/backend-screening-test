@@ -7,9 +7,10 @@ import (
 )
 
 type Column struct {
-	ID        uint64         `gorm:"primaryKey;autoIncrement:false"`
+	ID        uint64         `gorm:"primaryKey"`
 	Name      string         `gorm:"not null" json:"name"`
 	Order     uint           `json:"order"`
+	Cards     []Card         `gorm:"foreignKey:ColumnID" json:"cards"`
 	CreatedAt time.Time      `json:"createdAt"`
 	UpdatedAt time.Time      `json:"updatedAt"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"deletedAt"`

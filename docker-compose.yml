@@ -24,7 +24,5 @@ services:
       MYSQL_DATABASE: 'pandita'
       MYSQL_USER: 'bachmanity1'
       MYSQL_PASSWORD: 'bachmanity1'
-  redis:
-    image: redis
 
 
