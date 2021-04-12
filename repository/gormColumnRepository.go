@@ -27,7 +27,7 @@ func NewGormColumnRepository(conn *gorm.DB) ColumnRepository {
 func (g *gormColumnRepository) NewColumn(ctx context.Context, column *model.Column) (ccolumn *model.Column, err error) {
 	mlog.With(ctx).Debugw("gormColumn NewColumn", "column", column)
 	scope := g.Conn.WithContext(ctx)
-	if err = scope.Create(&column).Error; err != nil {
+	if err = scope.Preload("Cards").Create(&column).Error; err != nil {
 		mlog.With(ctx).Errorw("gormColumn NewColumn", "error", err)
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (g *gormColumnRepository) UpdateColumn(ctx context.Context, column *model.C
 		mlog.With(ctx).Errorw("gormColumn NewColumn", "error", err)
 		return nil, err
 	}
-	scope = scope.Where("id = ?", column.ID).Find(&column)
+	scope = scope.Preload("Cards", "cards.status != ?", model.Archived).Where("id = ?", column.ID).Find(&column)
 	if scope.Error != nil || scope.RowsAffected == 0 {
 		return nil, errors.NotFoundf("columnID[%d]", column.ID)
 	}
@@ -51,7 +51,8 @@ func (g *gormColumnRepository) UpdateColumn(ctx context.Context, column *model.C
 // GetColumnByID ...
 func (g *gormColumnRepository) GetColumnByID(ctx context.Context, id uint64) (column *model.Column, err error) {
 	scope := g.Conn.WithContext(ctx)
-	scope = scope.Where("id = ?", id).Find(&column)
+	column = &model.Column{}
+	scope = scope.Preload("Cards", "cards.status != ?", model.Archived).Where("id = ?", id).Find(&column)
 	if scope.Error != nil || scope.RowsAffected == 0 {
 		return nil, errors.NotFoundf("columnID[%d]", id)
 	}

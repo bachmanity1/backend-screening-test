@@ -25,20 +25,35 @@ func NewGormCardRepository(conn *gorm.DB) CardRepository {
 
 // NewCard ...
 func (g *gormCardRepository) NewCard(ctx context.Context, card *model.Card) (ccard *model.Card, err error) {
-	return
+	mlog.With(ctx).Debugw("gormCard NewCard", "card", card)
+	scope := g.Conn.WithContext(ctx)
+	if err = scope.Create(&card).Error; err != nil {
+		mlog.With(ctx).Errorw("gormCard NewCard", "error", err)
+		return nil, err
+	}
+	return card, nil
 }
 
 // UpdateCard ...
 func (g *gormCardRepository) UpdateCard(ctx context.Context, card *model.Card) (ccard *model.Card, err error) {
-	return
+	scope := g.Conn.WithContext(ctx)
+	if err = scope.Updates(card).Error; err != nil {
+		mlog.With(ctx).Errorw("gormCard NewCard", "error", err)
+		return nil, err
+	}
+	scope = scope.Where("id = ?", card.ID).Find(&card)
+	if scope.Error != nil || scope.RowsAffected == 0 {
+		return nil, errors.NotFoundf("cardID[%d]", card.ID)
+	}
+	return card, nil
 }
 
 // GetCardByID ...
 func (g *gormCardRepository) GetCardByID(ctx context.Context, id uint64) (card *model.Card, err error) {
 	scope := g.Conn.WithContext(ctx)
 	scope = scope.Where("id = ?", id).Find(&card)
-	if scope.RowsAffected == 0 {
-		return nil, errors.NotFoundf("cardID [%d]", id)
+	if scope.Error != nil || scope.RowsAffected == 0 {
+		return nil, errors.NotFoundf("cardID[%d]", id)
 	}
 	return card, nil
 }
