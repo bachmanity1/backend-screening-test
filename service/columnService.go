@@ -35,6 +35,11 @@ func (c *columnUsecase) GetColumnByID(ctx context.Context, id uint64) (column *m
 	return c.repo.GetColumnByID(ctx, id)
 }
 
+// GetColumnList ...
+func (c *columnUsecase) GetColumnList(ctx context.Context) (columns model.ColumnList, err error) {
+	return c.repo.GetColumnList(ctx)
+}
+
 // DeleteColumn ...
 func (c *columnUsecase) DeleteColumn(ctx context.Context, id uint64) (err error) {
 	return c.repo.DeleteColumn(ctx, id)

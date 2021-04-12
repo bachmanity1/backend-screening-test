@@ -59,6 +59,17 @@ func (g *gormColumnRepository) GetColumnByID(ctx context.Context, id uint64) (co
 	return column, nil
 }
 
+// GetColumnList ...
+func (g *gormColumnRepository) GetColumnList(ctx context.Context) (columns model.ColumnList, err error) {
+	scope := g.Conn.WithContext(ctx)
+	columns = model.ColumnList{}
+	scope = scope.Preload("Cards", "cards.status != ?", model.Archived).Find(&columns)
+	if scope.Error != nil || scope.RowsAffected == 0 {
+		return nil, errors.NotFoundf("No columns")
+	}
+	return columns, nil
+}
+
 // DeleteColumn ...
 func (g *gormColumnRepository) DeleteColumn(ctx context.Context, id uint64) error {
 	scope := g.Conn.WithContext(ctx)

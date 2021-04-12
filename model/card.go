@@ -18,6 +18,8 @@ type Card struct {
 	DeletedAt   gorm.DeletedAt `gorm:"index" json:"deletedAt"`
 }
 
+type CardList []*Card
+
 type Status int
 
 const (

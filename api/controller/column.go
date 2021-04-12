@@ -11,6 +11,7 @@ import (
 func newHTTPColumnHandler(eg *echo.Group, handler *HTTPHandler) {
 	// Prefix : /api/v1/column
 	eg.POST("", handler.NewColumn)
+	eg.GET("", handler.GetColumnList)
 	eg.GET("/:id", handler.GetColumnByID)
 	eg.PUT("/:id", handler.UpdateColumn)
 	eg.DELETE("/:id", handler.DeleteColumn)
@@ -89,4 +90,17 @@ func (h *HTTPHandler) DeleteColumn(c echo.Context) (err error) {
 	}
 
 	return response(c, http.StatusOK, "DeleteColumn OK")
+}
+
+// GetColumnList ...
+func (h *HTTPHandler) GetColumnList(c echo.Context) (err error) {
+	ctx := c.Request().Context()
+
+	columns, err := h.columnService.GetColumnList(ctx)
+	if err != nil {
+		mlog.With(ctx).Errorw("GetColumnList", "error", err)
+		return response(c, http.StatusInternalServerError, err.Error())
+	}
+
+	return response(c, http.StatusOK, "GetColumnList OK", columns)
 }
