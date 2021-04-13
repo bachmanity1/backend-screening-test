@@ -20,7 +20,7 @@ type Card struct {
 	ColumnID    uint64         `gorm:"index" json:"columnId"`
 	Name        string         `gorm:"not null" json:"name"`
 	Description string         `gorm:"not null" json:"description"`
-	Order       uint           `json:"order"`
+	Order       string         `gorm:"index" json:"order"`
 	Status      Status         `gorm:"default:1" json:"status"`
 	CreatedAt   time.Time      `json:"createdAt"`
 	UpdatedAt   time.Time      `json:"updatedAt"`
