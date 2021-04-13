@@ -1,6 +1,7 @@
 package model
 
 import (
+	"pandita/util"
 	"time"
 
 	"gorm.io/gorm"
@@ -33,4 +34,8 @@ func (c *Card) Update(other *Card) {
 	c.Name = other.Name
 	c.Description = other.Description
 	c.Status = other.Status
+}
+
+func (c *Card) UpdateOrder(prev, next string) {
+	c.Order = util.Rank(prev, next)
 }

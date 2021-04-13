@@ -14,6 +14,7 @@ func newHTTPCardHandler(eg *echo.Group, handler *HTTPHandler) {
 	eg.GET("/:id", handler.GetCardByID)
 	eg.PUT("/:id", handler.UpdateCard)
 	eg.DELETE("/:id", handler.DeleteCard)
+	eg.PUT("/:id/put", handler.PutAfterCard)
 }
 
 // NewCard ...
@@ -111,4 +112,28 @@ func (h *HTTPHandler) DeleteCard(c echo.Context) (err error) {
 	}
 
 	return response(c, http.StatusOK, "DeleteCard OK")
+}
+
+// PutAfterCard ...
+func (h *HTTPHandler) PutAfterCard(c echo.Context) (err error) {
+	ctx := c.Request().Context()
+
+	columnID, err := strconv.ParseUint(c.Param("columnid"), 10, 64)
+	if err != nil {
+		mlog.With(ctx).Errorw("PutAfterCard", "error", err)
+		return response(c, http.StatusBadRequest, "Invalid Path Param")
+	}
+	cardID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		mlog.With(ctx).Errorw("PutAfterCard", "error", err)
+		return response(c, http.StatusBadRequest, "Invalid Path Param")
+	}
+	prev := c.QueryParam("after")
+	card, err := h.cardService.PutAfter(ctx, columnID, cardID, prev)
+	if err != nil {
+		mlog.With(ctx).Errorw("PutAfterCard", "error", err)
+		return response(c, http.StatusInternalServerError, err.Error())
+	}
+
+	return response(c, http.StatusOK, "PutAfterCard OK", card)
 }

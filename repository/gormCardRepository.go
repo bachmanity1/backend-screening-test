@@ -75,3 +75,16 @@ func (g *gormCardRepository) DeleteCard(ctx context.Context, columnID, cardID ui
 	}
 	return nil
 }
+
+// GetNextCardOrder ...
+func (g *gormCardRepository) GetNextOrder(ctx context.Context, columnID uint64, prev string) (order string, err error) {
+	scope := g.Conn.WithContext(ctx)
+	card := &model.Card{}
+	if err = scope.Where("cards.column_id = ?", columnID).
+		Where("cards.order > ?", prev).
+		Order("cards.order").Limit(1).Find(&card).Error; err != nil {
+		mlog.With(ctx).Errorw("GetNextOrder", "error", err)
+		return "", err
+	}
+	return card.Order, nil
+}

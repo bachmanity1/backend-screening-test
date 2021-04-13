@@ -120,4 +120,5 @@ type CardRepository interface {
 	UpdateCard(ctx context.Context, card *model.Card) error
 	GetCardByID(ctx context.Context, columnID, cardID uint64) (*model.Card, error)
 	DeleteCard(ctx context.Context, columnID, cardID uint64) error
+	GetNextOrder(ctx context.Context, columnID uint64, prev string) (string, error)
 }

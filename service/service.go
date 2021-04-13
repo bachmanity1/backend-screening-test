@@ -40,4 +40,5 @@ type CardService interface {
 	UpdateCard(ctx context.Context, card *model.Card) (*model.Card, error)
 	GetCardByID(ctx context.Context, columnID, cardID uint64) (*model.Card, error)
 	DeleteCard(ctx context.Context, columnID, cardID uint64) error
+	PutAfter(ctx context.Context, cardID, columnID uint64, prev string) (*model.Card, error)
 }

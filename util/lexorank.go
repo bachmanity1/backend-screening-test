@@ -1,5 +1,7 @@
 package util
 
+import "strings"
+
 // code is taken from https://github.com/xissy/lexorank, with slight modifications
 
 const (
@@ -11,6 +13,9 @@ const (
 
 // Rank returns a new rank string between prev and next.
 func Rank(prev, next string) string {
+	if prev == "" {
+		prev = strings.Repeat("a", len(next))
+	}
 	mid := make([]byte, 0)
 	for i := 0; i < len(prev) || i < len(next); i++ {
 		prevChar := getChar(prev, i, minChar)
