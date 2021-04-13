@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"pandita/model"
+	"pandita/util"
 
 	"github.com/juju/errors"
 	"gorm.io/gorm"
@@ -27,6 +28,18 @@ func NewGormCardRepository(conn *gorm.DB) CardRepository {
 func (g *gormCardRepository) NewCard(ctx context.Context, card *model.Card) (ccard *model.Card, err error) {
 	mlog.With(ctx).Debugw("gormCard NewCard", "card", card)
 	scope := g.Conn.WithContext(ctx)
+
+	if scope.Where("id = ?", card.ColumnID).Find(&model.Column{}).RowsAffected == 0 {
+		return nil, errors.NotFoundf("columndID[%d]", card.ColumnID)
+	}
+
+	lastCard := &model.Card{}
+	if err = scope.Where("column_id = ?", card.ColumnID).Order("cards.order desc").Limit(1).Find(&lastCard).Error; err != nil {
+		mlog.With(ctx).Errorw("gormCard NewCard", "error", err)
+		return nil, err
+	}
+	card.Order = util.Rank(lastCard.Order, util.MaxRank)
+
 	if err = scope.Create(&card).Error; err != nil {
 		mlog.With(ctx).Errorw("gormCard NewCard", "error", err)
 		return nil, err

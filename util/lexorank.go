@@ -4,7 +4,7 @@ package util
 
 const (
 	MinRank = "aaaa"
-	MaxRabk = "zzzz"
+	MaxRank = "zzzz"
 	minChar = byte('a')
 	maxChar = byte('z')
 )

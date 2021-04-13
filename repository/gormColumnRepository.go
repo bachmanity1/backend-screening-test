@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"pandita/model"
+	"pandita/util"
 
 	"github.com/juju/errors"
 	"gorm.io/gorm"
@@ -27,6 +28,14 @@ func NewGormColumnRepository(conn *gorm.DB) ColumnRepository {
 func (g *gormColumnRepository) NewColumn(ctx context.Context, column *model.Column) (ccolumn *model.Column, err error) {
 	mlog.With(ctx).Debugw("gormColumn NewColumn", "column", column)
 	scope := g.Conn.WithContext(ctx)
+
+	lastColumn := &model.Column{}
+	if err = scope.Order("columns.order desc").Find(&lastColumn).Error; err != nil {
+		mlog.With(ctx).Errorw("gormColumn NewColumn", "error", err)
+		return nil, err
+	}
+	column.Order = util.Rank(lastColumn.Order, util.MaxRank)
+
 	if err = scope.Create(&column).Error; err != nil {
 		mlog.With(ctx).Errorw("gormColumn NewColumn", "error", err)
 		return nil, err
