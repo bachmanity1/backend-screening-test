@@ -84,3 +84,15 @@ func (g *gormColumnRepository) DeleteColumn(ctx context.Context, id uint64) erro
 	}
 	return nil
 }
+
+// GetNextOrder ...
+func (g *gormColumnRepository) GetNextOrder(ctx context.Context, prev string) (order string, err error) {
+	scope := g.Conn.WithContext(ctx)
+	column := &model.Column{}
+	if err = scope.Where("columns.order > ?", prev).
+		Order("columns.order").Limit(1).Find(&column).Error; err != nil {
+		mlog.With(ctx).Errorw("GetNextOrder", "error", err)
+		return "", err
+	}
+	return column.Order, nil
+}

@@ -51,3 +51,19 @@ func (c *columnUsecase) GetColumnList(ctx context.Context) (columns model.Column
 func (c *columnUsecase) DeleteColumn(ctx context.Context, id uint64) (err error) {
 	return c.repo.DeleteColumn(ctx, id)
 }
+
+// PutAfter ...
+func (c *columnUsecase) PutAfter(ctx context.Context, id uint64, prev string) (column *model.Column, err error) {
+	if column, err = c.repo.GetColumnByID(ctx, id); err != nil {
+		return nil, err
+	}
+	next, err := c.repo.GetNextOrder(ctx, prev)
+	if err != nil {
+		return nil, err
+	}
+	column.UpdateOrder(prev, next)
+	if err = c.repo.UpdateColumn(ctx, column); err != nil {
+		return nil, err
+	}
+	return c.repo.GetColumnByID(ctx, id)
+}

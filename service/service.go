@@ -31,6 +31,7 @@ type ColumnService interface {
 	GetColumnByID(ctx context.Context, id uint64) (*model.Column, error)
 	GetColumnList(ctx context.Context) (model.ColumnList, error)
 	DeleteColumn(ctx context.Context, id uint64) error
+	PutAfter(ctx context.Context, id uint64, prev string) (*model.Column, error)
 }
 
 // CardService ...

@@ -1,6 +1,7 @@
 package model
 
 import (
+	"pandita/util"
 	"time"
 
 	"gorm.io/gorm"
@@ -20,4 +21,8 @@ type ColumnList []*Column
 
 func (c *Column) Update(other *Column) {
 	c.Name = other.Name
+}
+
+func (c *Column) UpdateOrder(prev, next string) {
+	c.Order = util.Rank(prev, next)
 }

@@ -14,6 +14,7 @@ func newHTTPColumnHandler(eg *echo.Group, handler *HTTPHandler) {
 	eg.GET("", handler.GetColumnList)
 	eg.GET("/:id", handler.GetColumnByID)
 	eg.PUT("/:id", handler.UpdateColumn)
+	eg.PUT("/:id/put", handler.PutAfter)
 	eg.DELETE("/:id", handler.DeleteColumn)
 }
 
@@ -103,4 +104,23 @@ func (h *HTTPHandler) GetColumnList(c echo.Context) (err error) {
 	}
 
 	return response(c, http.StatusOK, "GetColumnList OK", columns)
+}
+
+// PutAfter ...
+func (h *HTTPHandler) PutAfter(c echo.Context) (err error) {
+	ctx := c.Request().Context()
+
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		mlog.With(ctx).Errorw("PutAfter", "error", err)
+		return response(c, http.StatusBadRequest, "Invalid Path Param")
+	}
+	prev := c.QueryParam("after")
+	column, err := h.columnService.PutAfter(ctx, id, prev)
+	if err != nil {
+		mlog.With(ctx).Errorw("PutAfter", "error", err)
+		return response(c, http.StatusInternalServerError, err.Error())
+	}
+
+	return response(c, http.StatusOK, "PutAfter OK", column)
 }

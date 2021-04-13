@@ -111,6 +111,7 @@ type ColumnRepository interface {
 	GetColumnByID(ctx context.Context, id uint64) (*model.Column, error)
 	GetColumnList(ctx context.Context) (model.ColumnList, error)
 	DeleteColumn(ctx context.Context, id uint64) error
+	GetNextOrder(ctx context.Context, prev string) (string, error)
 }
 
 // CardRepository ...
