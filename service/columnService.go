@@ -53,17 +53,12 @@ func (c *columnUsecase) DeleteColumn(ctx context.Context, id uint64) (err error)
 }
 
 // PutAfter ...
-func (c *columnUsecase) PutAfter(ctx context.Context, id uint64, prev string) (column *model.Column, err error) {
-	if column, err = c.repo.GetColumnByID(ctx, id); err != nil {
+func (c *columnUsecase) PutAfter(ctx context.Context, id, prev uint64) (columns model.ColumnList, err error) {
+	if _, err = c.repo.GetColumnByID(ctx, id); err != nil {
 		return nil, err
 	}
-	next, err := c.repo.GetNextOrder(ctx, prev)
-	if err != nil {
+	if err = c.repo.UpdateColumnOrder(ctx, id, prev); err != nil {
 		return nil, err
 	}
-	column.UpdateOrder(prev, next)
-	if err = c.repo.UpdateColumn(ctx, column); err != nil {
-		return nil, err
-	}
-	return c.repo.GetColumnByID(ctx, id)
+	return c.repo.GetColumnList(ctx)
 }

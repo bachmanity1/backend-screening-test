@@ -33,7 +33,7 @@ func (g *gormColumnRepository) NewColumn(ctx context.Context, column *model.Colu
 		mlog.With(ctx).Errorw("gormColumn NewColumn", "error", err)
 		return nil, err
 	}
-	column.UpdateOrder(lastColumn.Order, "")
+	column.Order = lastColumn.Order + 1
 
 	if err = scope.Create(&column).Error; err != nil {
 		mlog.With(ctx).Errorw("gormColumn NewColumn", "error", err)
@@ -84,14 +84,34 @@ func (g *gormColumnRepository) DeleteColumn(ctx context.Context, id uint64) erro
 	return nil
 }
 
-// GetNextOrder ...
-func (g *gormColumnRepository) GetNextOrder(ctx context.Context, prev string) (order string, err error) {
+// UpdateColumnOrder ...
+func (g *gormColumnRepository) UpdateColumnOrder(ctx context.Context, id, prev uint64) error {
 	scope := g.Conn.WithContext(ctx)
-	column := &model.Column{}
-	if err = scope.Where("columns.order > ?", prev).
-		Order("columns.order").Limit(1).Find(&column).Error; err != nil {
-		mlog.With(ctx).Errorw("GetNextOrder", "error", err)
-		return "", err
+	scope = scope.Begin()
+	if err := scope.Model(&model.Column{}).
+		Where("columns.order > ?", prev).
+		UpdateColumn("columns.order", gorm.Expr("columns.order + ?", 1)).Error; err != nil {
+		scope.Rollback()
+		return errors.Annotatef(err, "Internal Server Error")
 	}
-	return column.Order, nil
+	if err := scope.Model(&model.Column{}).
+		Where("id = ?", id).
+		Update("columns.order", prev+1).Error; err != nil {
+		scope.Rollback()
+		return errors.Annotatef(err, "Internal Server Error")
+	}
+	scope.Commit()
+	return nil
 }
+
+// // GetNextOrder ...
+// func (g *gormColumnRepository) GetNextOrder(ctx context.Context, prev string) (order string, err error) {
+// 	scope := g.Conn.WithContext(ctx)
+// 	column := &model.Column{}
+// 	if err = scope.Where("columns.order > ?", prev).
+// 		Order("columns.order").Limit(1).Find(&column).Error; err != nil {
+// 		mlog.With(ctx).Errorw("GetNextOrder", "error", err)
+// 		return "", err
+// 	}
+// 	return column.Order, nil
+// }

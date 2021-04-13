@@ -39,7 +39,7 @@ func InitHandler(pandita *conf.ViperConfig, e *echo.Echo, db *gorm.DB) (err erro
 
 	cardRepo := repo.NewGormCardRepository(db)
 	columnRepo := repo.NewGormColumnRepository(db)
-	cardService := service.NewCardService(cardRepo, timeout)
+	cardService := service.NewCardService(cardRepo, columnRepo, timeout)
 	columnService := service.NewColumnService(columnRepo, timeout)
 	newHTTPHandler(ver, pandita, cardService, columnService)
 	return nil

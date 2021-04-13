@@ -128,12 +128,16 @@ func (h *HTTPHandler) PutAfterCard(c echo.Context) (err error) {
 		mlog.With(ctx).Errorw("PutAfterCard", "error", err)
 		return response(c, http.StatusBadRequest, "Invalid Path Param")
 	}
-	prev := c.QueryParam("after")
-	card, err := h.cardService.PutAfter(ctx, columnID, cardID, prev)
+	prev, err := strconv.ParseUint(c.QueryParam("after"), 10, 64)
+	if err != nil {
+		mlog.With(ctx).Errorw("PutAfterColumn", "error", err)
+		return response(c, http.StatusBadRequest, "Invalid Path Param")
+	}
+	column, err := h.cardService.PutAfter(ctx, columnID, cardID, prev)
 	if err != nil {
 		mlog.With(ctx).Errorw("PutAfterCard", "error", err)
 		return response(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return response(c, http.StatusOK, "PutAfterCard OK", card)
+	return response(c, http.StatusOK, "PutAfterCard OK", column)
 }

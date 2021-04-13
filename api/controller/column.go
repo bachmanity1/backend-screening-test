@@ -115,12 +115,16 @@ func (h *HTTPHandler) PutAfterColumn(c echo.Context) (err error) {
 		mlog.With(ctx).Errorw("PutAfterColumn", "error", err)
 		return response(c, http.StatusBadRequest, "Invalid Path Param")
 	}
-	prev := c.QueryParam("after")
-	column, err := h.columnService.PutAfter(ctx, id, prev)
+	prev, err := strconv.ParseUint(c.QueryParam("after"), 10, 64)
+	if err != nil {
+		mlog.With(ctx).Errorw("PutAfterColumn", "error", err)
+		return response(c, http.StatusBadRequest, "Invalid Path Param")
+	}
+	columns, err := h.columnService.PutAfter(ctx, id, prev)
 	if err != nil {
 		mlog.With(ctx).Errorw("PutAfterColumn", "error", err)
 		return response(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return response(c, http.StatusOK, "PutAfterColumn OK", column)
+	return response(c, http.StatusOK, "PutAfterColumn OK", columns)
 }

@@ -1,7 +1,6 @@
 package model
 
 import (
-	"pandita/util"
 	"time"
 
 	"gorm.io/gorm"
@@ -21,7 +20,7 @@ type Card struct {
 	ColumnID    uint64         `gorm:"index" json:"columnId"`
 	Name        string         `gorm:"not null" json:"name"`
 	Description string         `gorm:"not null" json:"description"`
-	Order       string         `gorm:"index" json:"order"`
+	Order       int            `gorm:"index;default:1" json:"order"`
 	Status      Status         `gorm:"default:1" json:"status"`
 	CreatedAt   time.Time      `json:"createdAt"`
 	UpdatedAt   time.Time      `json:"updatedAt"`
@@ -34,8 +33,4 @@ func (c *Card) Update(other *Card) {
 	c.Name = other.Name
 	c.Description = other.Description
 	c.Status = other.Status
-}
-
-func (c *Card) UpdateOrder(prev, next string) {
-	c.Order = util.Rank(prev, next)
 }
