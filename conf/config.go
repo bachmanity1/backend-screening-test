@@ -2,12 +2,9 @@ package conf
 
 import (
 	"fmt"
-	"net/http"
 	"os"
-	"runtime"
 	"strings"
 
-	"github.com/labstack/gommon/log"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
@@ -101,11 +98,9 @@ func readConfig(defaults map[string]interface{}) (*ViperConfig, error) {
 	v.AutomaticEnv()
 
 	stage := strings.ToLower(v.GetString("ENV"))
-	fmt.Printf("Loading %s Environment...\n", stage)
 	switch stage {
 	case "devel":
 		v.SetConfigName(defaultConf.EnvServerDEV)
-		v.Debug()
 	case "stage":
 		v.SetConfigName(defaultConf.EnvServerSTAGE)
 	case "prod":
@@ -128,33 +123,4 @@ func readConfig(defaults map[string]interface{}) (*ViperConfig, error) {
 	return &ViperConfig{
 		Viper: v,
 	}, nil
-}
-
-// APILogLevel string to log level
-func (vp *ViperConfig) APILogLevel() log.Lvl {
-	switch strings.ToLower(vp.GetString("loglevel")) {
-	case "off":
-		return log.OFF
-	case "error":
-		return log.ERROR
-	case "warn", "warning":
-		return log.WARN
-	case "info":
-		return log.INFO
-	case "debug":
-		return log.DEBUG
-	default:
-		return log.DEBUG
-	}
-}
-
-// SetProfile ...
-func (vp *ViperConfig) SetProfile() {
-	if vp.GetBool("profile") {
-		runtime.SetBlockProfileRate(1)
-		go func() {
-			profileListen := fmt.Sprintf("0.0.0.0:%d", vp.GetInt("profilePort"))
-			http.ListenAndServe(profileListen, nil)
-		}()
-	}
 }

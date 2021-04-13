@@ -41,7 +41,7 @@ func (g *gormCardRepository) UpdateCard(ctx context.Context, card *model.Card) (
 		mlog.With(ctx).Errorw("gormCard NewCard", "error", err)
 		return nil, err
 	}
-	scope = scope.Where("id = ?", card.ID).Find(&card)
+	scope = scope.Where("column_id = ? AND id = ?", card.ColumnID, card.ID).Find(&card)
 	if scope.Error != nil || scope.RowsAffected == 0 {
 		return nil, errors.NotFoundf("cardID[%d]", card.ID)
 	}
@@ -49,19 +49,19 @@ func (g *gormCardRepository) UpdateCard(ctx context.Context, card *model.Card) (
 }
 
 // GetCardByID ...
-func (g *gormCardRepository) GetCardByID(ctx context.Context, id uint64) (card *model.Card, err error) {
+func (g *gormCardRepository) GetCardByID(ctx context.Context, columnID, cardID uint64) (card *model.Card, err error) {
 	scope := g.Conn.WithContext(ctx)
-	scope = scope.Where("id = ?", id).Find(&card)
+	scope = scope.Where("column_id = ? AND id = ?", columnID, cardID).Find(&card)
 	if scope.Error != nil || scope.RowsAffected == 0 {
-		return nil, errors.NotFoundf("cardID[%d]", id)
+		return nil, errors.NotFoundf("cardID[%d]")
 	}
 	return card, nil
 }
 
 // DeleteCard ...
-func (g *gormCardRepository) DeleteCard(ctx context.Context, id uint64) error {
+func (g *gormCardRepository) DeleteCard(ctx context.Context, columnID, cardID uint64) error {
 	scope := g.Conn.WithContext(ctx)
-	if err := scope.Delete(&model.Card{}, id).Error; err != nil {
+	if err := scope.Where("column_id = ? AND id = ?", columnID, cardID).Delete(&model.Card{}).Error; err != nil {
 		return errors.Annotatef(err, "Internal Server Error")
 	}
 	return nil

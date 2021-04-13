@@ -20,11 +20,17 @@ func newHTTPCardHandler(eg *echo.Group, handler *HTTPHandler) {
 func (h *HTTPHandler) NewCard(c echo.Context) (err error) {
 	ctx := c.Request().Context()
 
+	columnID, err := strconv.ParseUint(c.Param("columnid"), 10, 64)
+	if err != nil {
+		mlog.With(ctx).Errorw("NewCard", "error", err)
+		return response(c, http.StatusBadRequest, "Invalid Path Param")
+	}
 	card := &model.Card{}
 	if err := c.Bind(card); err != nil {
-		mlog.With(ctx).Infow("NewCard", "error", err)
+		mlog.With(ctx).Errorw("NewCard", "error", err)
 		return response(c, http.StatusBadRequest, err.Error())
 	}
+	card.ColumnID = columnID
 
 	card, err = h.cardService.NewCard(ctx, card)
 	if err != nil {
@@ -39,13 +45,18 @@ func (h *HTTPHandler) NewCard(c echo.Context) (err error) {
 func (h *HTTPHandler) GetCardByID(c echo.Context) (err error) {
 	ctx := c.Request().Context()
 
-	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	columnID, err := strconv.ParseUint(c.Param("columnid"), 10, 64)
+	if err != nil {
+		mlog.With(ctx).Errorw("GetCardByID", "error", err)
+		return response(c, http.StatusBadRequest, "Invalid Path Param")
+	}
+	cardID, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
 		mlog.With(ctx).Errorw("GetCardByID", "error", err)
 		return response(c, http.StatusBadRequest, "Invalid Path Param")
 	}
 
-	card, err := h.cardService.GetCardByID(ctx, id)
+	card, err := h.cardService.GetCardByID(ctx, columnID, cardID)
 	if err != nil {
 		mlog.With(ctx).Errorw("GetCardByID", "error", err)
 		return response(c, http.StatusInternalServerError, err.Error())
@@ -58,11 +69,17 @@ func (h *HTTPHandler) GetCardByID(c echo.Context) (err error) {
 func (h *HTTPHandler) UpdateCard(c echo.Context) (err error) {
 	ctx := c.Request().Context()
 
+	columnID, err := strconv.ParseUint(c.Param("columnid"), 10, 64)
+	if err != nil {
+		mlog.With(ctx).Errorw("UpdateCard", "error", err)
+		return response(c, http.StatusBadRequest, "Invalid Path Param")
+	}
 	card := &model.Card{}
 	if err := c.Bind(card); err != nil {
-		mlog.With(ctx).Infow("UpdateCard", "error", err)
+		mlog.With(ctx).Errorw("UpdateCard", "error", err)
 		return response(c, http.StatusBadRequest, err.Error())
 	}
+	card.ColumnID = columnID
 
 	card, err = h.cardService.UpdateCard(ctx, card)
 	if err != nil {
@@ -77,13 +94,18 @@ func (h *HTTPHandler) UpdateCard(c echo.Context) (err error) {
 func (h *HTTPHandler) DeleteCard(c echo.Context) (err error) {
 	ctx := c.Request().Context()
 
-	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	columnID, err := strconv.ParseUint(c.Param("columnid"), 10, 64)
+	if err != nil {
+		mlog.With(ctx).Errorw("DeleteCard", "error", err)
+		return response(c, http.StatusBadRequest, "Invalid Path Param")
+	}
+	cardID, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
 		mlog.With(ctx).Errorw("DeleteCard", "error", err)
 		return response(c, http.StatusBadRequest, "Invalid Path Param")
 	}
 
-	if err := h.cardService.DeleteCard(ctx, id); err != nil {
+	if err := h.cardService.DeleteCard(ctx, columnID, cardID); err != nil {
 		mlog.With(ctx).Errorw("DeleteCard", "error", err)
 		return response(c, http.StatusInternalServerError, err.Error())
 	}

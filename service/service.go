@@ -37,6 +37,6 @@ type ColumnService interface {
 type CardService interface {
 	NewCard(ctx context.Context, card *model.Card) (*model.Card, error)
 	UpdateCard(ctx context.Context, card *model.Card) (*model.Card, error)
-	GetCardByID(ctx context.Context, id uint64) (*model.Card, error)
-	DeleteCard(ctx context.Context, id uint64) error
+	GetCardByID(ctx context.Context, columnID, cardID uint64) (*model.Card, error)
+	DeleteCard(ctx context.Context, columnID, cardID uint64) error
 }

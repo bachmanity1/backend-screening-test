@@ -39,7 +39,7 @@ build: vendor ; $(info $(M) building executable… ) @ ## Build program binary
 		$(BUILDTAG) \
 		-mod vendor \
 		-o $(BIN)/$(PACKAGE)
-	$Q cd $(BASE) && cp -fp conf/.env.json bin/.
+	$Q cd $(BASE) 
 
 .PHONY: docker
 docker: ; $(info $(M) building docker image… ) @ ## Build for docker image 
@@ -140,21 +140,9 @@ vendor: vendor-check go.mod pkg.list ; $(info $(M) retrieving dependencies…)
 
 # Misc
 
-.PHONY: install
-install: ; $(info $(M) installing…)	@
-	@mkdir -p $(DESTDIR)
-	@cp -fp bin/$(PACKAGE) $(DESTDIR)/.
-	@cp -fp conf/.env.json $(DESTDIR)/.env.json
-
 .PHONY: clean
 clean: ; $(info $(M) cleaning…)	@ ## Cleanup everything
 	@rm -rf bin
 	@rm -rf vendor
 	@rm -rf pkg.list
 	@rm -rf test/tests.* test/coverage.*
-
-.PHONY: help
-help:
-	@grep -E '^[ a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
-		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
-
