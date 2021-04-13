@@ -12,7 +12,7 @@ type Card struct {
 	Name        string         `gorm:"not null" json:"name"`
 	Description string         `gorm:"not null" json:"description"`
 	Order       uint           `json:"order"`
-	Status      Status         `gorm:"deafult:0" json:"status"`
+	Status      Status         `gorm:"default:1" json:"status"`
 	CreatedAt   time.Time      `json:"createdAt"`
 	UpdatedAt   time.Time      `json:"updatedAt"`
 	DeletedAt   gorm.DeletedAt `gorm:"index" json:"deletedAt"`
@@ -20,10 +20,10 @@ type Card struct {
 
 type CardList []*Card
 
-type Status int
+type Status byte
 
 const (
-	NotSelected = Status(iota)
+	NotSelected = Status(iota + 1)
 	InProgress
 	Done
 	Archived

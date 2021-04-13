@@ -7,7 +7,7 @@ import (
 )
 
 type Column struct {
-	ID        uint64         `gorm:"primaryKey"`
+	ID        uint64         `gorm:"primaryKey" json:"id"`
 	Name      string         `gorm:"not null" json:"name"`
 	Order     uint           `json:"order"`
 	Cards     CardList       `json:"cards"`

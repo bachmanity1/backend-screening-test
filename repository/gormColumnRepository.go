@@ -27,10 +27,11 @@ func NewGormColumnRepository(conn *gorm.DB) ColumnRepository {
 func (g *gormColumnRepository) NewColumn(ctx context.Context, column *model.Column) (ccolumn *model.Column, err error) {
 	mlog.With(ctx).Debugw("gormColumn NewColumn", "column", column)
 	scope := g.Conn.WithContext(ctx)
-	if err = scope.Preload("Cards").Create(&column).Error; err != nil {
+	if err = scope.Create(&column).Error; err != nil {
 		mlog.With(ctx).Errorw("gormColumn NewColumn", "error", err)
 		return nil, err
 	}
+	column.Cards = model.CardList{}
 	return column, nil
 }
 
