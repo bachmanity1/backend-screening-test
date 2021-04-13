@@ -27,7 +27,14 @@ func (c *columnUsecase) NewColumn(ctx context.Context, column *model.Column) (cc
 
 // UpdateColumn ...
 func (c *columnUsecase) UpdateColumn(ctx context.Context, column *model.Column) (ccolumn *model.Column, err error) {
-	return c.repo.UpdateColumn(ctx, column)
+	if ccolumn, err = c.repo.GetColumnByID(ctx, column.ID); err != nil {
+		return nil, err
+	}
+	ccolumn.Update(column)
+	if err = c.repo.UpdateColumn(ctx, ccolumn); err != nil {
+		return nil, err
+	}
+	return c.repo.GetColumnByID(ctx, ccolumn.ID)
 }
 
 // GetColumnByID ...

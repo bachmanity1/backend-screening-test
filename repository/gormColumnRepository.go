@@ -36,17 +36,13 @@ func (g *gormColumnRepository) NewColumn(ctx context.Context, column *model.Colu
 }
 
 // UpdateColumn ...
-func (g *gormColumnRepository) UpdateColumn(ctx context.Context, column *model.Column) (ccolumn *model.Column, err error) {
+func (g *gormColumnRepository) UpdateColumn(ctx context.Context, column *model.Column) (err error) {
 	scope := g.Conn.WithContext(ctx)
 	if err = scope.Updates(column).Error; err != nil {
 		mlog.With(ctx).Errorw("gormColumn NewColumn", "error", err)
-		return nil, err
+		return err
 	}
-	scope = scope.Preload("Cards", "cards.status != ?", model.Archived).Where("id = ?", column.ID).Find(&column)
-	if scope.Error != nil || scope.RowsAffected == 0 {
-		return nil, errors.NotFoundf("columnID[%d]", column.ID)
-	}
-	return column, nil
+	return nil
 }
 
 // GetColumnByID ...

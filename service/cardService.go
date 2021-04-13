@@ -27,7 +27,14 @@ func (c *cardUsecase) NewCard(ctx context.Context, card *model.Card) (ccard *mod
 
 // UpdateCard ...
 func (c *cardUsecase) UpdateCard(ctx context.Context, card *model.Card) (ccard *model.Card, err error) {
-	return c.repo.UpdateCard(ctx, card)
+	if ccard, err = c.repo.GetCardByID(ctx, card.ColumnID, card.ID); err != nil {
+		return nil, err
+	}
+	ccard.Update(card)
+	if err = c.repo.UpdateCard(ctx, ccard); err != nil {
+		return nil, err
+	}
+	return c.repo.GetCardByID(ctx, ccard.ColumnID, ccard.ID)
 }
 
 // GetCardByID ...

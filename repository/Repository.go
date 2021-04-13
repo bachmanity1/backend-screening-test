@@ -107,7 +107,7 @@ func getLogLevel(logLevel string) logger.LogLevel {
 // ColumnRepository ...
 type ColumnRepository interface {
 	NewColumn(ctx context.Context, column *model.Column) (*model.Column, error)
-	UpdateColumn(ctx context.Context, column *model.Column) (*model.Column, error)
+	UpdateColumn(ctx context.Context, column *model.Column) error
 	GetColumnByID(ctx context.Context, id uint64) (*model.Column, error)
 	GetColumnList(ctx context.Context) (model.ColumnList, error)
 	DeleteColumn(ctx context.Context, id uint64) error
@@ -116,7 +116,7 @@ type ColumnRepository interface {
 // CardRepository ...
 type CardRepository interface {
 	NewCard(ctx context.Context, card *model.Card) (*model.Card, error)
-	UpdateCard(ctx context.Context, card *model.Card) (*model.Card, error)
+	UpdateCard(ctx context.Context, card *model.Card) error
 	GetCardByID(ctx context.Context, columnID, cardID uint64) (*model.Card, error)
 	DeleteCard(ctx context.Context, columnID, cardID uint64) error
 }

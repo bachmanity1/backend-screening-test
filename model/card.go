@@ -6,6 +6,15 @@ import (
 	"gorm.io/gorm"
 )
 
+type Status byte
+
+const (
+	NotSelected = Status(iota + 1)
+	InProgress
+	Done
+	Archived
+)
+
 type Card struct {
 	ID          uint64         `gorm:"primaryKey" json:"id"`
 	ColumnID    uint64         `gorm:"index" json:"columnId"`
@@ -20,11 +29,8 @@ type Card struct {
 
 type CardList []*Card
 
-type Status byte
-
-const (
-	NotSelected = Status(iota + 1)
-	InProgress
-	Done
-	Archived
-)
+func (c *Card) Update(other *Card) {
+	c.Name = other.Name
+	c.Description = other.Description
+	c.Status = other.Status
+}

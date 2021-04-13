@@ -17,3 +17,7 @@ type Column struct {
 }
 
 type ColumnList []*Column
+
+func (c *Column) Update(other *Column) {
+	c.Name = other.Name
+}

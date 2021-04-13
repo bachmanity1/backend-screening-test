@@ -35,17 +35,13 @@ func (g *gormCardRepository) NewCard(ctx context.Context, card *model.Card) (cca
 }
 
 // UpdateCard ...
-func (g *gormCardRepository) UpdateCard(ctx context.Context, card *model.Card) (ccard *model.Card, err error) {
+func (g *gormCardRepository) UpdateCard(ctx context.Context, card *model.Card) (err error) {
 	scope := g.Conn.WithContext(ctx)
 	if err = scope.Updates(card).Error; err != nil {
 		mlog.With(ctx).Errorw("gormCard NewCard", "error", err)
-		return nil, err
+		return err
 	}
-	scope = scope.Where("column_id = ? AND id = ?", card.ColumnID, card.ID).Find(&card)
-	if scope.Error != nil || scope.RowsAffected == 0 {
-		return nil, errors.NotFoundf("cardID[%d]", card.ID)
-	}
-	return card, nil
+	return nil
 }
 
 // GetCardByID ...
