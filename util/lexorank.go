@@ -3,7 +3,6 @@ package util
 import "strings"
 
 // code is taken from https://github.com/xissy/lexorank, with slight modifications
-
 const (
 	MinRank = "aaaa"
 	MaxRank = "zzzz"
@@ -14,14 +13,18 @@ const (
 // Rank returns a new rank string between prev and next.
 func Rank(prev, next string) string {
 	if prev == "" {
-		prev = strings.Repeat("a", len(next))
+		prev = strings.Repeat("a", max(1, len(next)))
 	}
+
 	mid := make([]byte, 0)
 	for i := 0; i < len(prev) || i < len(next); i++ {
 		prevChar := getChar(prev, i, minChar)
 		nextChar := getChar(next, i, maxChar)
 		midChar := getMid(prevChar, nextChar)
 		mid = append(mid, midChar)
+		if midChar != prevChar {
+			break
+		}
 	}
 	rank := string(mid)
 
@@ -40,4 +43,11 @@ func getChar(s string, i int, defaultChar byte) byte {
 		return defaultChar
 	}
 	return s[i]
+}
+
+func max(x, y int) int {
+	if x > y {
+		return x
+	}
+	return y
 }

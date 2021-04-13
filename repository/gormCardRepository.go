@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"pandita/model"
-	"pandita/util"
 
 	"github.com/juju/errors"
 	"gorm.io/gorm"
@@ -38,7 +37,7 @@ func (g *gormCardRepository) NewCard(ctx context.Context, card *model.Card) (cca
 		mlog.With(ctx).Errorw("gormCard NewCard", "error", err)
 		return nil, err
 	}
-	card.Order = util.Rank(lastCard.Order, util.MaxRank)
+	card.UpdateOrder(lastCard.Order, "")
 
 	if err = scope.Create(&card).Error; err != nil {
 		mlog.With(ctx).Errorw("gormCard NewCard", "error", err)

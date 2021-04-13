@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"pandita/model"
-	"pandita/util"
 
 	"github.com/juju/errors"
 	"gorm.io/gorm"
@@ -34,7 +33,7 @@ func (g *gormColumnRepository) NewColumn(ctx context.Context, column *model.Colu
 		mlog.With(ctx).Errorw("gormColumn NewColumn", "error", err)
 		return nil, err
 	}
-	column.Order = util.Rank(lastColumn.Order, util.MaxRank)
+	column.UpdateOrder(lastColumn.Order, "")
 
 	if err = scope.Create(&column).Error; err != nil {
 		mlog.With(ctx).Errorw("gormColumn NewColumn", "error", err)
