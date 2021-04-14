@@ -1,7 +1,7 @@
 package model
 
 import (
-	"pandita/util"
+	"terra/util"
 )
 
 var mlog *util.MLogger

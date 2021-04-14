@@ -1,23 +1,23 @@
 package controller
 
 import (
-	"pandita/conf"
-	"pandita/service"
+	"terra/conf"
+	"terra/service"
 
 	"github.com/labstack/echo/v4"
 )
 
 type HTTPHandler struct {
-	pandita       *conf.ViperConfig
+	terra         *conf.ViperConfig
 	cardService   service.CardService
 	columnService service.ColumnService
 }
 
 func newHTTPHandler(eg *echo.Group,
-	pandita *conf.ViperConfig,
+	terra *conf.ViperConfig,
 	cardService service.CardService,
 	columnService service.ColumnService) {
-	handler := &HTTPHandler{pandita, cardService, columnService}
+	handler := &HTTPHandler{terra, cardService, columnService}
 
 	columnGroup := eg.Group("/column")
 	newHTTPColumnHandler(columnGroup, handler)

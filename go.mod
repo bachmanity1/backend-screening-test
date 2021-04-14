@@ -1,4 +1,4 @@
-module pandita
+module terra
 
 go 1.13
 

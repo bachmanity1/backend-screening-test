@@ -1,13 +1,13 @@
 version: '3'
 services:
-  pandita:
+  terra:
     build: .
     ports:
       - 10811:10811
     environment:
       DB_HOST: 'db'
       DB_PORT: 3306
-      DB_NAME: 'pandita'
+      DB_NAME: 'terra'
       DB_USER: 'bachmanity1'
       DB_PASS: 'bachmanity1'
       DB_RETRY: 'True'
@@ -21,7 +21,7 @@ services:
       - 3306:3306
     environment:
       MYSQL_ROOT_PASSWORD: 'bachmanity1'
-      MYSQL_DATABASE: 'pandita'
+      MYSQL_DATABASE: 'terra'
       MYSQL_USER: 'bachmanity1'
       MYSQL_PASSWORD: 'bachmanity1'
 

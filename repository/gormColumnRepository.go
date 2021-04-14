@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"pandita/model"
+	"terra/model"
 
 	"github.com/juju/errors"
 	"gorm.io/gorm"

@@ -14,8 +14,8 @@ package service
 
 import (
 	"context"
-	"pandita/model"
-	"pandita/util"
+	"terra/model"
+	"terra/util"
 )
 
 var mlog *util.MLogger

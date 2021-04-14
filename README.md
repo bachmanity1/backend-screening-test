@@ -14,5 +14,5 @@ Postman collection is available at [this link](https://www.getpostman.com/collec
 1. Make sure to reflect parameters for local instance of MariaDB(MySQL) in the `./conf/.env.dev.json` file.
 2. ```bash
     $ make build
-    $ bin/terraform
+    $ bin/terra
    ```

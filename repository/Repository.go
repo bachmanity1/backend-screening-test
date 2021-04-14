@@ -21,10 +21,10 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"pandita/conf"
-	"pandita/model"
-	"pandita/util"
 	"strings"
+	"terra/conf"
+	"terra/model"
+	"terra/util"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -39,28 +39,28 @@ func InitRepository(env string) {
 }
 
 // InitDB ...
-func InitDB(pandita *conf.ViperConfig) *gorm.DB {
+func InitDB(terra *conf.ViperConfig) *gorm.DB {
 	mlog.Debugw("InitDB ",
-		"host", pandita.GetString("db_host"),
-		"user", pandita.GetString("db_user"),
-		"name", pandita.GetString("db_name"),
+		"host", terra.GetString("db_host"),
+		"user", terra.GetString("db_user"),
+		"name", terra.GetString("db_name"),
 	)
 
 	dbLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags),
 		logger.Config{
 			SlowThreshold: time.Second,
-			LogLevel:      getLogLevel(pandita.GetString("loglevel")),
+			LogLevel:      getLogLevel(terra.GetString("loglevel")),
 			Colorful:      true,
 		},
 	)
 
 	dbURI := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=UTC",
-		pandita.GetString("db_user"),
-		pandita.GetString("db_pass"),
-		pandita.GetString("db_host"),
-		pandita.GetInt("db_port"),
-		pandita.GetString("db_name"),
+		terra.GetString("db_user"),
+		terra.GetString("db_pass"),
+		terra.GetString("db_host"),
+		terra.GetInt("db_port"),
+		terra.GetString("db_name"),
 	)
 
 	dbConn, err := gorm.Open(mysql.Open(dbURI), &gorm.Config{
@@ -69,7 +69,7 @@ func InitDB(pandita *conf.ViperConfig) *gorm.DB {
 	if err != nil {
 		mlog.Errorw("InitDB Open", "err", err)
 		retryCount := 0
-		for pandita.GetBool("db_retry") {
+		for terra.GetBool("db_retry") {
 			time.Sleep(3 * time.Second)
 			dbConn, err = gorm.Open(mysql.Open(dbURI), &gorm.Config{
 				Logger: dbLogger,
@@ -87,11 +87,11 @@ func InitDB(pandita *conf.ViperConfig) *gorm.DB {
 			os.Exit(1)
 		}
 	}
-	maxopen := pandita.GetInt("db_maxopen")
+	maxopen := terra.GetInt("db_maxopen")
 	db, _ := dbConn.DB()
 	db.SetMaxIdleConns(int(float32(maxopen) * 0.9))
 	db.SetMaxOpenConns(maxopen)
-	db.SetConnMaxLifetime(time.Duration(pandita.GetInt("db_maxlife")) * time.Second)
+	db.SetConnMaxLifetime(time.Duration(terra.GetInt("db_maxlife")) * time.Second)
 	return dbConn
 }
 

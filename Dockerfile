@@ -1,5 +1,5 @@
 FROM golang:latest
-WORKDIR /pandita
-ADD . /pandita
+WORKDIR /terra
+ADD . /terra
 RUN make build
-ENTRYPOINT ["bin/pandita"]
+ENTRYPOINT ["bin/terra"]

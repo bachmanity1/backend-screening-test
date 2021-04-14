@@ -2,8 +2,8 @@ package controller
 
 import (
 	"net/http"
-	"pandita/model"
 	"strconv"
+	"terra/model"
 
 	"github.com/labstack/echo/v4"
 )

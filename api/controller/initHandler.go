@@ -3,11 +3,11 @@ package controller
 import (
 	"fmt"
 	"net/http"
-	mw "pandita/api/middleware"
-	"pandita/conf"
-	repo "pandita/repository"
-	"pandita/service"
-	"pandita/util"
+	mw "terra/api/middleware"
+	"terra/conf"
+	repo "terra/repository"
+	"terra/service"
+	"terra/util"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -15,8 +15,8 @@ import (
 )
 
 type (
-	// PanditaStatus for common response status
-	PanditaStatus struct {
+	// terraStatus for common response status
+	terraStatus struct {
 		TRID       string      `json:"trID" example:"20200213052007345858"`
 		ResultCode string      `json:"resultCode" example:"0000"`
 		ResultMsg  string      `json:"resultMsg" example:"Request OK"`
@@ -32,7 +32,7 @@ func InitControler(env string) {
 }
 
 // InitHandler ...
-func InitHandler(pandita *conf.ViperConfig, e *echo.Echo, db *gorm.DB) (err error) {
+func InitHandler(terra *conf.ViperConfig, e *echo.Echo, db *gorm.DB) (err error) {
 	api := e.Group("/api")
 	ver := api.Group("/v1")
 	ver.Use(mw.TransID())
@@ -41,7 +41,7 @@ func InitHandler(pandita *conf.ViperConfig, e *echo.Echo, db *gorm.DB) (err erro
 	columnRepo := repo.NewGormColumnRepository(db)
 	cardService := service.NewCardService(cardRepo, columnRepo, timeout)
 	columnService := service.NewColumnService(columnRepo, timeout)
-	newHTTPHandler(ver, pandita, cardService, columnService)
+	newHTTPHandler(ver, terra, cardService, columnService)
 	return nil
 }
 
@@ -56,7 +56,7 @@ func response(c echo.Context, code int, resMsg string, result ...interface{}) er
 		id = util.NewID()
 	}
 
-	res := PanditaStatus{
+	res := terraStatus{
 		TRID:       id,
 		ResultCode: resCode,
 		ResultMsg:  resMsg,

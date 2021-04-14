@@ -1,10 +1,10 @@
-PACKAGE = pandita
+PACKAGE = terra
 BUILDPATH ?= $(CURDIR)
 DATE    ?= $(shell date +%FT%T%z)
 PKGS	= $(or $(PKG),$(shell cd $(BASE) && cat pkg.list))
 BASE	= $(BUILDPATH)
 BIN		= $(BASE)/bin
-DESTDIR	= /opt/pandita
+DESTDIR	= /opt/terra
 DOCKERPORT = 10811
 
 #GOENV   = CGO_LDFLAGS_ALLOW='-fopenmp'

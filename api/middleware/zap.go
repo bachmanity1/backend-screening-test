@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"pandita/util"
+	"terra/util"
 	"time"
 
 	"github.com/labstack/echo/v4"

@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	ct "pandita/api/controller"
-	mw "pandita/api/middleware"
-	conf "pandita/conf"
-	"pandita/model"
-	repo "pandita/repository"
-	"pandita/service"
-	"pandita/util"
 	"runtime"
+	ct "terra/api/controller"
+	mw "terra/api/middleware"
+	conf "terra/conf"
+	"terra/model"
+	repo "terra/repository"
+	"terra/service"
+	"terra/util"
 
 	"github.com/juju/errors"
 	"github.com/labstack/echo/v4"
@@ -26,32 +26,32 @@ func init() {
 }
 
 func main() {
-	pandita := conf.Pandita
-	mlog, _ = util.InitLog("main", pandita.GetString("loglevel"))
+	terra := conf.Terra
+	mlog, _ = util.InitLog("main", terra.GetString("loglevel"))
 
-	e := echoInit(pandita)
+	e := echoInit(terra)
 
 	// Prepare Server
-	env := pandita.GetString("loglevel")
+	env := terra.GetString("loglevel")
 	ct.InitControler(env)
 	model.InitModel(env)
 	repo.InitRepository(env)
 	service.InitService(env)
-	db := repo.InitDB(pandita)
-	if err := ct.InitHandler(pandita, e, db); err != nil {
+	db := repo.InitDB(terra)
+	if err := ct.InitHandler(terra, e, db); err != nil {
 		mlog.Errorw("InitHandler", "err", errors.Details(err))
 		os.Exit(1)
 	}
 
 	// Start Server
-	apiServer := fmt.Sprintf("0.0.0.0:%d", pandita.GetInt("port"))
+	apiServer := fmt.Sprintf("0.0.0.0:%d", terra.GetInt("port"))
 	mlog.Infow("Starting server", "listen", apiServer)
 	if err := e.Start(apiServer); err != nil {
 		mlog.Errorw("End server", "err", err)
 	}
 }
 
-func echoInit(pandita *conf.ViperConfig) (e *echo.Echo) {
+func echoInit(terra *conf.ViperConfig) (e *echo.Echo) {
 	// Echo instance
 	e = echo.New()
 
@@ -65,8 +65,8 @@ func echoInit(pandita *conf.ViperConfig) (e *echo.Echo) {
 		AllowMethods: []string{echo.POST, echo.GET, echo.PUT, echo.DELETE},
 	}))
 	// Ping Check
-	e.GET("/healthCheck", func(c echo.Context) error { return c.String(http.StatusAlreadyReported, "pandita API Alive!\n") })
-	e.POST("/healthCheck", func(c echo.Context) error { return c.String(http.StatusAlreadyReported, "pandita API Alive!\n") })
+	e.GET("/healthCheck", func(c echo.Context) error { return c.String(http.StatusAlreadyReported, "terra API Alive!\n") })
+	e.POST("/healthCheck", func(c echo.Context) error { return c.String(http.StatusAlreadyReported, "terra API Alive!\n") })
 
 	e.Use(mw.ZapLogger(mlog))
 	e.HideBanner = true

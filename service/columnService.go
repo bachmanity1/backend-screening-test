@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"pandita/model"
-	repo "pandita/repository"
+	"terra/model"
+	repo "terra/repository"
 	"time"
 )
 
