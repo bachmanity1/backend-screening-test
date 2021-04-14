@@ -29,9 +29,9 @@ func TestRank(t *testing.T) {
 			rank: "m",
 		},
 		{
-			prev: "zzz",
+			prev: "zzy",
 			next: "",
-			rank: "zzzm",
+			rank: "zzym",
 		},
 		{
 			prev: "",
@@ -42,6 +42,11 @@ func TestRank(t *testing.T) {
 			prev: "a",
 			next: "ab",
 			rank: "aam",
+		},
+		{
+			prev: "ab",
+			next: "b",
+			rank: "an",
 		},
 	} {
 		if rank := Rank(test.prev, test.next); rank != test.rank {
