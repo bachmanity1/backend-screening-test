@@ -57,8 +57,9 @@ func (g *gormColumnRepository) UpdateColumn(ctx context.Context, column *model.C
 func (g *gormColumnRepository) GetColumnByID(ctx context.Context, id uint64) (column *model.Column, err error) {
 	scope := g.Conn.WithContext(ctx)
 	column = &model.Column{}
-	scope = scope.Preload("Cards", "cards.status != ?", model.Archived, "order by cards.order").
-		Where("id = ?", id).Find(&column)
+	scope = scope.Preload("Cards", func(db *gorm.DB) *gorm.DB {
+		return db.Order("cards.order").Where("cards.status != ?", model.Archived)
+	}).Where("id = ?", id).Find(&column)
 	if scope.Error != nil || scope.RowsAffected == 0 {
 		return nil, errors.NotFoundf("columnID[%d]", id)
 	}
@@ -69,9 +70,9 @@ func (g *gormColumnRepository) GetColumnByID(ctx context.Context, id uint64) (co
 func (g *gormColumnRepository) GetColumnList(ctx context.Context) (columns model.ColumnList, err error) {
 	scope := g.Conn.WithContext(ctx)
 	columns = model.ColumnList{}
-	scope = scope.Preload("Cards", "cards.status != ?", model.Archived, "order by cards.order").
-		Order("columns.order").
-		Find(&columns)
+	scope = scope.Preload("Cards", func(db *gorm.DB) *gorm.DB {
+		return db.Order("cards.order").Where("cards.status != ?", model.Archived)
+	}).Order("columns.order").Find(&columns)
 	return columns, scope.Error
 }
 

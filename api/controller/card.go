@@ -14,7 +14,7 @@ func newHTTPCardHandler(eg *echo.Group, handler *HTTPHandler) {
 	eg.GET("/:id", handler.GetCardByID)
 	eg.PUT("/:id", handler.UpdateCard)
 	eg.DELETE("/:id", handler.DeleteCard)
-	eg.PUT("/:id/put", handler.PutAfterCard)
+	eg.PUT("/:id/after/:prev", handler.PutAfterCard)
 }
 
 // NewCard ...
@@ -128,7 +128,7 @@ func (h *HTTPHandler) PutAfterCard(c echo.Context) (err error) {
 		mlog.With(ctx).Errorw("PutAfterCard", "error", err)
 		return response(c, http.StatusBadRequest, "Invalid Path Param")
 	}
-	prev, err := strconv.ParseUint(c.QueryParam("after"), 10, 64)
+	prev, err := strconv.ParseUint(c.Param("prev"), 10, 64)
 	if err != nil {
 		mlog.With(ctx).Errorw("PutAfterColumn", "error", err)
 		return response(c, http.StatusBadRequest, "Invalid Path Param")

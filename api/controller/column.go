@@ -14,7 +14,7 @@ func newHTTPColumnHandler(eg *echo.Group, handler *HTTPHandler) {
 	eg.GET("", handler.GetColumnList)
 	eg.GET("/:id", handler.GetColumnByID)
 	eg.PUT("/:id", handler.UpdateColumn)
-	eg.PUT("/:id/put", handler.PutAfterColumn)
+	eg.PUT("/:id/after/:prev", handler.PutAfterColumn)
 	eg.DELETE("/:id", handler.DeleteColumn)
 }
 
@@ -115,7 +115,7 @@ func (h *HTTPHandler) PutAfterColumn(c echo.Context) (err error) {
 		mlog.With(ctx).Errorw("PutAfterColumn", "error", err)
 		return response(c, http.StatusBadRequest, "Invalid Path Param")
 	}
-	prev, err := strconv.ParseUint(c.QueryParam("after"), 10, 64)
+	prev, err := strconv.ParseUint(c.Param("prev"), 10, 64)
 	if err != nil {
 		mlog.With(ctx).Errorw("PutAfterColumn", "error", err)
 		return response(c, http.StatusBadRequest, "Invalid Path Param")
