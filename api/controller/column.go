@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 	"terra/model"
+	"terra/util"
 
 	"github.com/labstack/echo/v4"
 )
@@ -115,16 +116,15 @@ func (h *HTTPHandler) PutAfterColumn(c echo.Context) (err error) {
 		mlog.With(ctx).Errorw("PutAfterColumn", "error", err)
 		return response(c, http.StatusBadRequest, "Invalid Path Param")
 	}
-	prev, err := strconv.ParseUint(c.Param("prev"), 10, 64)
-	if err != nil {
-		mlog.With(ctx).Errorw("PutAfterColumn", "error", err)
+	prev, ok := util.ParseRank(c.Param("prev"))
+	if !ok {
 		return response(c, http.StatusBadRequest, "Invalid Path Param")
 	}
-	columns, err := h.columnService.PutAfter(ctx, id, prev)
+	column, err := h.columnService.PutAfter(ctx, id, prev)
 	if err != nil {
 		mlog.With(ctx).Errorw("PutAfterColumn", "error", err)
 		return response(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return response(c, http.StatusOK, "PutAfterColumn OK", columns)
+	return response(c, http.StatusOK, "PutAfterColumn OK", column)
 }

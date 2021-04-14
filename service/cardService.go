@@ -53,12 +53,17 @@ func (c *cardUsecase) DeleteCard(ctx context.Context, columnID, cardID uint64) (
 }
 
 // PutAfter ...
-func (c *cardUsecase) PutAfter(ctx context.Context, columnID, cardID, prev uint64) (column *model.Column, err error) {
-	if _, err := c.repo.GetCardByID(ctx, columnID, cardID); err != nil {
+func (c *cardUsecase) PutAfter(ctx context.Context, columnID, cardID uint64, prev string) (card *model.Card, err error) {
+	if card, err = c.repo.GetCardByID(ctx, columnID, cardID); err != nil {
 		return nil, err
 	}
-	if err = c.repo.UpdateCardOrder(ctx, columnID, cardID, prev); err != nil {
+	next, err := c.repo.GetNextOrder(ctx, columnID, prev)
+	if err != nil {
 		return nil, err
 	}
-	return c.colRepo.GetColumnByID(ctx, columnID)
+	card.SetOrder(prev, next)
+	if err = c.repo.UpdateCard(ctx, card); err != nil {
+		return nil, err
+	}
+	return c.repo.GetCardByID(ctx, columnID, cardID)
 }

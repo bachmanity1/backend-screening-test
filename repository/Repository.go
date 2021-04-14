@@ -111,8 +111,8 @@ type ColumnRepository interface {
 	GetColumnByID(ctx context.Context, id uint64) (*model.Column, error)
 	GetColumnList(ctx context.Context) (model.ColumnList, error)
 	DeleteColumn(ctx context.Context, id uint64) error
-	// GetNextOrder(ctx context.Context, prev string) (string, error)
-	UpdateColumnOrder(ctx context.Context, id, prev uint64) error
+	GetNextOrder(ctx context.Context, prev string) (string, error)
+	// UpdateColumnOrder(ctx context.Context, id, prev uint64) error
 }
 
 // CardRepository ...
@@ -121,6 +121,6 @@ type CardRepository interface {
 	UpdateCard(ctx context.Context, card *model.Card) error
 	GetCardByID(ctx context.Context, columnID, cardID uint64) (*model.Card, error)
 	DeleteCard(ctx context.Context, columnID, cardID uint64) error
-	UpdateCardOrder(ctx context.Context, columndID, cardID, prev uint64) error
-	// GetNextOrder(ctx context.Context, columnID uint64, prev string) (string, error)
+	// UpdateCardOrder(ctx context.Context, columndID, cardID, prev uint64) error
+	GetNextOrder(ctx context.Context, columnID uint64, prev string) (string, error)
 }

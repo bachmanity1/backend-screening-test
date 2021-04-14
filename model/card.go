@@ -1,6 +1,7 @@
 package model
 
 import (
+	"terra/util"
 	"time"
 
 	"gorm.io/gorm"
@@ -20,7 +21,7 @@ type Card struct {
 	ColumnID    uint64         `gorm:"index" json:"columnId"`
 	Name        string         `gorm:"not null" json:"name"`
 	Description string         `gorm:"not null" json:"description"`
-	Order       uint           `gorm:"index" json:"order"`
+	Order       string         `gorm:"index" json:"order"`
 	Status      Status         `gorm:"default:1" json:"status"`
 	CreatedAt   time.Time      `json:"createdAt"`
 	UpdatedAt   time.Time      `json:"updatedAt"`
@@ -33,4 +34,8 @@ func (c *Card) Update(other *Card) {
 	c.Name = other.Name
 	c.Description = other.Description
 	c.Status = other.Status
+}
+
+func (c *Card) SetOrder(prev, next string) {
+	c.Order = util.Rank(prev, next)
 }
